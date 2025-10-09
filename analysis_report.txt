@@ -1,0 +1,23 @@
+SITES OCH ANALYSVECKOR
+--------------------
+Site: Datacenter
+Analysveckor: v.36, v.37, v.38, v.39
+
+Site: Huvudkontor
+Analysveckor: v.36, v.37, v.38, v.39
+
+Site: Kontor Malmö
+Analysveckor: v.36, v.37, v.38
+
+Site: Lager
+Analysveckor: v.36, v.37, v.38
+
+Site: Säkerhetskopia
+Analysveckor: v.36, v.37, v.38
+
+INCIDENTS PER SEVERITY
+--------------------
+high: 13
+critical: 10
+medium: 17
+low: 12

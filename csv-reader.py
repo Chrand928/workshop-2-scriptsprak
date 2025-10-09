@@ -15,7 +15,7 @@ def ticket_processor(network_incidents):
         'severity_counts': defaultdict(int),
         'high_impact_incidents': [],
         'top_expensive_incidents': [],
-        'sites': defaultdict(lambda: {'incident_count': 0, 'total_cost': 0.0, 'resolution_times': []}),
+        'sites': {},
         'categories': defaultdict(lambda: {'incident_count': 0, 'total_impact': 0.0}),
         'unique_weeks': sorted({ticket['week_number'] for ticket in tickets}),
         'unique_sites': sorted({ticket['site'] for ticket in tickets}),
@@ -37,6 +37,28 @@ def ticket_processor(network_incidents):
         cost = parse_swedish_cost(cost_swe)
         ticket["cost"] = cost
 
+        # Collect the information on the 5 most expensive incidents
+        data["top_expensive_incidents"].append((ticket, cost))
+
+        # Collect information by site
+        site = ticket["site"]
+        if site not in data["sites"]:
+            data["sites"][site] = {'incident_count': 0, 'total_cost': 0.0, 'resolution_times': [], 'weeks': set()}
+
+        data["sites"][site]["incident_count"] += 1
+        data["sites"][site]["total_cost"] += cost
+        data["sites"][site]["resolution_times"].append(int(ticket["resolution_minutes"]))
+        data["sites"][site]["weeks"].add(ticket["week_number"])
+
+        # Collect information by category
+        category = ticket["category"]
+        data["categories"][category]["incident_count"] += 1
+        data["categories"][category]["total_impact"] += float(ticket["impact_score"])
+
+    # Sorts the 5 most expensive incidents to be used in the code above
+    data["top_expensive_incidents"].sort(key=lambda top: top[1], reverse=True)
+    data["top_expensive_incidents"] = data["top_expensive_incidents"][:5]
+
     return data
 
 # Adds code to convert into swedish numbering to be used 
@@ -44,6 +66,19 @@ def parse_swedish_cost(cost_swe):
     cost_swe = cost_swe.replace(" ", "").replace(",", ".")
     return float(cost_swe)
 
-
+# Helps read and process the data
 network_incidents = "network_incidents.csv"
 data = ticket_processor(network_incidents)
+
+
+# Writes Site and analysisperiod information from the data to a report
+with open("analysis_report.txt", "w", encoding="utf-8") as report_file:
+    report_file.write("SITES OCH ANALYSVECKOR\n--------------------\n")
+    for site in data["unique_sites"]:
+        weeks = sorted(data["sites"][site]["weeks"])
+        report_file.write(f"Site: {site}\nAnalysveckor: v.{", v.".join(weeks)}\n\n")
+
+    # Counts total amount of incidents per severity ***(Behöver fixa lite mer för att sortera listan och formatera lite....)
+    report_file.write("INCIDENTS PER SEVERITY\n--------------------\n")
+    for severity, count in data["severity_counts"].items():
+        report_file.write(f"{severity}: {count}\n")
