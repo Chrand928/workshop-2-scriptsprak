@@ -132,13 +132,24 @@ with open("analysis_report.txt", "w", encoding="utf-8") as report_file:
         report_file.write(f"{top_5}. Ticket ID: {ticket["ticket_id"].ljust(15)} Kostnad: {ticket["cost_sek"].ljust(10)}SEK\n")
 
     # Writes Total cost of incidents to report
-    report_file.write("\nTOTAL KOSTNAD FÖR INCIDENTER\n--------------------\n")
-    report_file.write(f"Total kostnad: {data["total_cost_formatted"]} SEK\n")
+    report_file.write("\nTOTALKOSTNAD FÖR INCIDENTER\n--------------------\n")
+    report_file.write(f"Totalkostnad: {data["total_cost_formatted"]} SEK\n")
 
     # Writes average resolution time to report
     report_file.write("\nGENOMSNITTLIG RESOLUTION TIME PER SEVERITY-NIVÅ\n--------------------\n")
     for severity, avg_time in data["avg_resolution_time"].items():
         report_file.write(f"{severity.ljust(10)}-->   {avg_time:.2f} minuter\n")
+
+    # Writes Summary per site to report
+    report_file.write("\nÖVERSIKT PER SITE\n--------------------\n")
+    for site in data ["unique_sites"]:
+        site_data = data["sites"][site]
+        avg_resolution_time = sum(site_data["resolution_times"]) / len(site_data["resolution_times"]) if site_data["resolution_times"] else 0
+        report_file.write(f"{site}:\n")
+        report_file.write(f" Antal incidenter: {site_data["incident_count"]}\n")
+        report_file.write(f" Totalkostnad: {format_swedish_total(site_data["total_cost"])} SEK\n")
+        report_file.write(f" Genomsnittlig resolution tid: {avg_resolution_time:.2f} minuter\n\n")
+ 
 
 
 

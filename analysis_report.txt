@@ -42,9 +42,9 @@ DE 5 DYRASTE INCEIDENTERNA
 4. Ticket ID: TECH-2024-049   Kostnad: 26 789,75 SEK
 5. Ticket ID: TECH-2024-037   Kostnad: 24 567,25 SEK
 
-TOTAL KOSTNAD FÖR INCIDENTER
+TOTALKOSTNAD FÖR INCIDENTER
 --------------------
-Total kostnad: 445 910,10 SEK
+Totalkostnad: 445 910,10 SEK
 
 GENOMSNITTLIG RESOLUTION TIME PER SEVERITY-NIVÅ
 --------------------
@@ -52,3 +52,31 @@ Critical  -->   118.80 minuter
 High      -->   108.46 minuter
 Medium    -->   113.24 minuter
 Low       -->   107.08 minuter
+
+ÖVERSIKT PER SITE
+--------------------
+Datacenter:
+ Antal incidenter: 13
+ Totalkostnad: 139 996,40 SEK
+ Genomsnittlig resolution tid: 110.00 minuter
+
+Huvudkontor:
+ Antal incidenter: 13
+ Totalkostnad: 113 353,80 SEK
+ Genomsnittlig resolution tid: 103.85 minuter
+
+Kontor Malmö:
+ Antal incidenter: 9
+ Totalkostnad: 72 714,50 SEK
+ Genomsnittlig resolution tid: 107.22 minuter
+
+Lager:
+ Antal incidenter: 10
+ Totalkostnad: 78 129,40 SEK
+ Genomsnittlig resolution tid: 127.30 minuter
+
+Säkerhetskopia:
+ Antal incidenter: 7
+ Totalkostnad: 41 716,00 SEK
+ Genomsnittlig resolution tid: 112.86 minuter
+
