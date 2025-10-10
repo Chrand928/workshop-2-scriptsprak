@@ -20,6 +20,7 @@ def ticket_processor(network_incidents):
         "categories": defaultdict(lambda: {"incident_count": 0, "total_impact": 0.0}),
         "unique_weeks": sorted({ticket["week_number"] for ticket in tickets}),
         "unique_sites": sorted({ticket["site"] for ticket in tickets}),
+        "severity_resolution_times": defaultdict(list),
     }
 
     # Severity order added going from highest to lowest
@@ -33,6 +34,8 @@ def ticket_processor(network_incidents):
         # Counts amount of tickets and sorts by severity level
         severity = ticket["severity"].lower()
         data["severity_counts"][ticket["severity"]] += 1
+        # Adds key for resolution time per severity
+        data["severity_resolution_times"][severity].append(int(ticket["resolution_minutes"]))
 
         # Adds incidents that affect more than 100 users
         affected_users = ticket.get("affected_users", "0")
@@ -75,8 +78,19 @@ def ticket_processor(network_incidents):
     
     # Sorts high_impact_incidents with most affected users highest up on the list
     data["high_impact_incidents"].sort(key=lambda hi_imp: int(hi_imp.get("affected_users", 0)), reverse=True)
-
+    
+    # Total cost formatted 
     data["total_cost_formatted"] = format_swedish_total(total_cost)
+
+    # Counts average resolution time of severity
+    data["avg_resolution_time"] = {}
+    for severity in severity_order:
+        resolution_times = data["severity_resolution_times"].get(severity, [])
+        if resolution_times:
+            avg_time = sum(resolution_times) / len(resolution_times)
+            data["avg_resolution_time"][severity.capitalize()] = avg_time
+        else:
+            data["avg_resolution_time"][severity.capitalize()] = 0
 
     return data
 
@@ -117,10 +131,14 @@ with open("analysis_report.txt", "w", encoding="utf-8") as report_file:
     for top_5, (ticket, cost) in enumerate(data["top_expensive_incidents"], 1):
         report_file.write(f"{top_5}. Ticket ID: {ticket["ticket_id"].ljust(15)} Kostnad: {ticket["cost_sek"].ljust(10)}SEK\n")
 
-    # 
+    # Writes Total cost of incidents to report
     report_file.write("\nTOTAL KOSTNAD FÖR INCIDENTER\n--------------------\n")
     report_file.write(f"Total kostnad: {data["total_cost_formatted"]} SEK\n")
 
+    # Writes average resolution time to report
+    report_file.write("\nGENOMSNITTLIG RESOLUTION TIME PER SEVERITY-NIVÅ\n--------------------\n")
+    for severity, avg_time in data["avg_resolution_time"].items():
+        report_file.write(f"{severity.ljust(10)}-->   {avg_time:.2f} minuter\n")
 
 
 

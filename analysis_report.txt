@@ -45,3 +45,10 @@ DE 5 DYRASTE INCEIDENTERNA
 TOTAL KOSTNAD FÖR INCIDENTER
 --------------------
 Total kostnad: 445 910,10 SEK
+
+GENOMSNITTLIG RESOLUTION TIME PER SEVERITY-NIVÅ
+--------------------
+Critical  -->   118.80 minuter
+High      -->   108.46 minuter
+Medium    -->   113.24 minuter
+Low       -->   107.08 minuter
