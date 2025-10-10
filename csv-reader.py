@@ -11,20 +11,24 @@ def ticket_processor(network_incidents):
 
     # Creates a centralized datastructure that we can point back to throughout the code 
     data = {
-        'tickets': tickets,
-        'severity_counts': defaultdict(int),
-        'high_impact_incidents': [],
-        'top_expensive_incidents': [],
-        'sites': {},
-        'categories': defaultdict(lambda: {'incident_count': 0, 'total_impact': 0.0}),
-        'unique_weeks': sorted({ticket['week_number'] for ticket in tickets}),
-        'unique_sites': sorted({ticket['site'] for ticket in tickets}),
+        "tickets": tickets,
+        "severity_counts": defaultdict(int),
+        "formatted_severity_counts": {},
+        "high_impact_incidents": [],
+        "top_expensive_incidents": [],
+        "sites": {},
+        "categories": defaultdict(lambda: {"incident_count": 0, "total_impact": 0.0}),
+        "unique_weeks": sorted({ticket["week_number"] for ticket in tickets}),
+        "unique_sites": sorted({ticket["site"] for ticket in tickets}),
     }
 
+    # Severity order added going from highest to lowest
+    severity_order = ["critical", "high", "medium", "low"]
     
     for ticket in data["tickets"]: 
     
         # Counts amount of tickets and sorts by severity level
+        severity = ticket["severity"].lower()
         data["severity_counts"][ticket["severity"]] += 1
 
         # Adds incidents that affect more than 100 users
@@ -55,10 +59,16 @@ def ticket_processor(network_incidents):
         data["categories"][category]["incident_count"] += 1
         data["categories"][category]["total_impact"] += float(ticket["impact_score"])
 
+    # Adds formattting to sort severity and capitalie the first letters
+    for severity in severity_order:
+        count = data["severity_counts"].get(severity, 0)
+        formatted_severity = severity.capitalize()
+        data["formatted_severity_counts"][formatted_severity] = count
+
     # Sorts the 5 most expensive incidents to be used in the code above
     data["top_expensive_incidents"].sort(key=lambda top: top[1], reverse=True)
     data["top_expensive_incidents"] = data["top_expensive_incidents"][:5]
-
+    
     return data
 
 # Adds code to convert into swedish numbering to be used 
@@ -80,5 +90,10 @@ with open("analysis_report.txt", "w", encoding="utf-8") as report_file:
 
     # Counts total amount of incidents per severity ***(Behöver fixa lite mer för att sortera listan och formatera lite....)
     report_file.write("INCIDENTS PER SEVERITY\n--------------------\n")
-    for severity, count in data["severity_counts"].items():
-        report_file.write(f"{severity}: {count}\n")
+    for severity, count in data["formatted_severity_counts"].items():
+        report_file.write(f"{severity.ljust(10)}-->   {count} incidents\n")
+
+
+
+
+

@@ -17,7 +17,7 @@ Analysveckor: v.36, v.37, v.38
 
 INCIDENTS PER SEVERITY
 --------------------
-high: 13
-critical: 10
-medium: 17
-low: 12
+Critical  -->   10 incidents
+High      -->   13 incidents
+Medium    -->   17 incidents
+Low       -->   12 incidents
