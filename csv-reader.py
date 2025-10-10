@@ -101,5 +101,6 @@ with open("analysis_report.txt", "w", encoding="utf-8") as report_file:
     for ticket in data["high_impact_incidents"]:
         report_file.write(f"Ticket ID: {ticket["ticket_id"].ljust(15)} Site: {ticket["site"].ljust(15)} Affected Users: {ticket["affected_users"].ljust(5)}\n")
 
-
-
+    report_file.write("\nDE 5 DYRASTE INCEIDENTERNA\n--------------------\n")
+    for top_5, (ticket, cost) in enumerate(data["top_expensive_incidents"], 1):
+        report_file.write(f"{top_5}. Ticket ID: {ticket["ticket_id"].ljust(15)} Kostnad: {ticket["cost_sek"].ljust(10)}SEK\n")
