@@ -25,6 +25,9 @@ def ticket_processor(network_incidents):
     # Severity order added going from highest to lowest
     severity_order = ["critical", "high", "medium", "low"]
     
+    # Sets total cost starting value to 0
+    total_cost = 0.0
+
     for ticket in data["tickets"]: 
     
         # Counts amount of tickets and sorts by severity level
@@ -36,10 +39,11 @@ def ticket_processor(network_incidents):
         if affected_users and int(affected_users) > 100:
             data ["high_impact_incidents"].append(ticket)
         
-        # Adds cost for each incident
+        # Adds cost for each incident and total cost
         cost_swe = ticket["cost_sek"]
         cost = parse_swedish_cost(cost_swe)
         ticket["cost"] = cost
+        total_cost += cost
 
         # Collect the information on the 5 most expensive incidents
         data["top_expensive_incidents"].append((ticket, cost))
@@ -72,12 +76,19 @@ def ticket_processor(network_incidents):
     # Sorts high_impact_incidents with most affected users highest up on the list
     data["high_impact_incidents"].sort(key=lambda hi_imp: int(hi_imp.get("affected_users", 0)), reverse=True)
 
+    data["total_cost_formatted"] = format_swedish_total(total_cost)
+
     return data
 
 # Adds code to convert into swedish numbering to be used 
 def parse_swedish_cost(cost_swe):
     cost_swe = cost_swe.replace(" ", "").replace(",", ".")
     return float(cost_swe)
+
+def format_swedish_total(cost_float):
+    cost_str = "{:,.2f}".format(cost_float)
+    cost_str = cost_str.replace(",", "X").replace(".", ",").replace("X", " ")
+    return cost_str
 
 # Helps read and process the data
 network_incidents = "network_incidents.csv"
@@ -101,6 +112,16 @@ with open("analysis_report.txt", "w", encoding="utf-8") as report_file:
     for ticket in data["high_impact_incidents"]:
         report_file.write(f"Ticket ID: {ticket["ticket_id"].ljust(15)} Site: {ticket["site"].ljust(15)} Affected Users: {ticket["affected_users"].ljust(5)}\n")
 
+    # Writes TOP 5 most expensive incidents to report
     report_file.write("\nDE 5 DYRASTE INCEIDENTERNA\n--------------------\n")
     for top_5, (ticket, cost) in enumerate(data["top_expensive_incidents"], 1):
         report_file.write(f"{top_5}. Ticket ID: {ticket["ticket_id"].ljust(15)} Kostnad: {ticket["cost_sek"].ljust(10)}SEK\n")
+
+    # 
+    report_file.write("\nTOTAL KOSTNAD FÖR INCIDENTER\n--------------------\n")
+    report_file.write(f"Total kostnad: {data["total_cost_formatted"]} SEK\n")
+
+
+
+
+

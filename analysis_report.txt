@@ -41,3 +41,7 @@ DE 5 DYRASTE INCEIDENTERNA
 3. Ticket ID: TECH-2024-040   Kostnad: 28 765,50 SEK
 4. Ticket ID: TECH-2024-049   Kostnad: 26 789,75 SEK
 5. Ticket ID: TECH-2024-037   Kostnad: 24 567,25 SEK
+
+TOTAL KOSTNAD FÖR INCIDENTER
+--------------------
+Total kostnad: 445 910,10 SEK
