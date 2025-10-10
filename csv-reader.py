@@ -66,9 +66,12 @@ def ticket_processor(network_incidents):
         data["formatted_severity_counts"][formatted_severity] = count
 
     # Sorts the 5 most expensive incidents to be used in the code above
-    data["top_expensive_incidents"].sort(key=lambda top: top[1], reverse=True)
+    data["top_expensive_incidents"].sort(key=lambda top_exp: top_exp[1], reverse=True)
     data["top_expensive_incidents"] = data["top_expensive_incidents"][:5]
     
+    # Sorts high_impact_incidents with most affected users highest up on the list
+    data["high_impact_incidents"].sort(key=lambda hi_imp: int(hi_imp.get("affected_users", 0)), reverse=True)
+
     return data
 
 # Adds code to convert into swedish numbering to be used 
@@ -88,12 +91,15 @@ with open("analysis_report.txt", "w", encoding="utf-8") as report_file:
         weeks = sorted(data["sites"][site]["weeks"])
         report_file.write(f"Site: {site}\nAnalysveckor: v.{", v.".join(weeks)}\n\n")
 
-    # Counts total amount of incidents per severity ***(Behöver fixa lite mer för att sortera listan och formatera lite....)
-    report_file.write("INCIDENTS PER SEVERITY\n--------------------\n")
+    # Writes total amount of incidents per severity to report
+    report_file.write("INCIDENTER PER SEVERITY-NIVÅ\n--------------------\n")
     for severity, count in data["formatted_severity_counts"].items():
         report_file.write(f"{severity.ljust(10)}-->   {count} incidents\n")
 
-
+    # Writes highest impact incidents to report
+    report_file.write("\nINCIDENTER SOM PÅVERKAT FLER ÄN 100 ANVÄNDARE\n--------------------\n")
+    for ticket in data["high_impact_incidents"]:
+        report_file.write(f"Ticket ID: {ticket["ticket_id"].ljust(15)} Site: {ticket["site"].ljust(15)} Affected Users: {ticket["affected_users"].ljust(5)}\n")
 
 
 

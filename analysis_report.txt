@@ -15,9 +15,21 @@ Analysveckor: v.36, v.37, v.38
 Site: Säkerhetskopia
 Analysveckor: v.36, v.37, v.38
 
-INCIDENTS PER SEVERITY
+INCIDENTER PER SEVERITY-NIVÅ
 --------------------
 Critical  -->   10 incidents
 High      -->   13 incidents
 Medium    -->   17 incidents
 Low       -->   12 incidents
+
+INCIDENTER SOM PÅVERKAT FLER ÄN 100 ANVÄNDARE
+--------------------
+Ticket ID: TECH-2024-026   Site: Datacenter      Affected Users: 234  
+Ticket ID: TECH-2024-039   Site: Datacenter      Affected Users: 198  
+Ticket ID: TECH-2024-022   Site: Datacenter      Affected Users: 189  
+Ticket ID: TECH-2024-052   Site: Datacenter      Affected Users: 178  
+Ticket ID: TECH-2024-034   Site: Datacenter      Affected Users: 167  
+Ticket ID: TECH-2024-006   Site: Datacenter      Affected Users: 156  
+Ticket ID: TECH-2024-030   Site: Datacenter      Affected Users: 145  
+Ticket ID: TECH-2024-014   Site: Datacenter      Affected Users: 123  
+Ticket ID: TECH-2024-047   Site: Datacenter      Affected Users: 123  
