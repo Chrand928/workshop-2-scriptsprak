@@ -17,7 +17,7 @@ def ticket_processor(network_incidents):
         "high_impact_incidents": [],
         "top_expensive_incidents": [],
         "sites": {},
-        "categories": defaultdict(lambda: {"incident_count": 0, "total_impact": 0.0}),
+        "categories": defaultdict(lambda: {"incident_count": 0, "total_impact": 0.0, "impact_scores": []}),
         "unique_weeks": sorted({ticket["week_number"] for ticket in tickets}),
         "unique_sites": sorted({ticket["site"] for ticket in tickets}),
         "severity_resolution_times": defaultdict(list),
@@ -65,6 +65,7 @@ def ticket_processor(network_incidents):
         category = ticket["category"]
         data["categories"][category]["incident_count"] += 1
         data["categories"][category]["total_impact"] += float(ticket["impact_score"])
+        data["categories"][category]["impact_scores"].append(float(ticket["impact_score"]))
 
     # Adds formattting to sort severity and capitalie the first letters
     for severity in severity_order:
@@ -150,7 +151,13 @@ with open("analysis_report.txt", "w", encoding="utf-8") as report_file:
         report_file.write(f" Totalkostnad: {format_swedish_total(site_data["total_cost"])} SEK\n")
         report_file.write(f" Genomsnittlig resolution tid: {avg_resolution_time:.2f} minuter\n\n")
  
-
-
+    # 
+    report_file.write("\nINCIDENTS PER CATEGORY - GENOMSNITTLIG IMPACT\n--------------------\n")
+    for category, category_data in data["categories"].items():
+        avg_impact_score = sum(category_data["impact_scores"]) /len(category_data["impact_scores"]) if category_data["impact_scores"] else 0
+        formatted_category = category.capitalize()
+        report_file.write(f"{formatted_category.ljust(14)}{avg_impact_score:.2f}   Antal incidenter {category_data["incident_count"]}\n")
+                          
+    
 
 

@@ -80,3 +80,11 @@ Säkerhetskopia:
  Totalkostnad: 41 716,00 SEK
  Genomsnittlig resolution tid: 112.86 minuter
 
+
+INCIDENTS PER CATEGORY - GENOMSNITTLIG IMPACT
+--------------------
+Connectivity  6.80   Antal incidenter 14
+Wifi          6.30   Antal incidenter 9
+Performance   5.95   Antal incidenter 14
+Security      5.78   Antal incidenter 6
+Hardware      7.09   Antal incidenter 9
