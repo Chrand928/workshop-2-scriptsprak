@@ -34,7 +34,7 @@ Ticket ID: TECH-2024-030   Site: Datacenter      Affected Users: 145
 Ticket ID: TECH-2024-014   Site: Datacenter      Affected Users: 123  
 Ticket ID: TECH-2024-047   Site: Datacenter      Affected Users: 123  
 
-DE 5 DYRASTE INCEIDENTERNA
+DE 5 DYRASTE INCIDENTERNA
 --------------------
 1. Ticket ID: TECH-2024-024   Kostnad: 45 678,90 SEK
 2. Ticket ID: TECH-2024-022   Kostnad: 34 567,50 SEK

@@ -111,7 +111,7 @@ data = ticket_processor(network_incidents)
 
 
 # Writes Site and analysisperiod information from the data to a report
-with open("analysis_report.txt", "w", encoding="utf-8") as report_file:
+with open("incident_analysis.txt", "w", encoding="utf-8") as report_file:
     report_file.write("SITES OCH ANALYSVECKOR\n--------------------\n")
     for site in data["unique_sites"]:
         weeks = sorted(data["sites"][site]["weeks"])
@@ -128,7 +128,7 @@ with open("analysis_report.txt", "w", encoding="utf-8") as report_file:
         report_file.write(f"Ticket ID: {ticket["ticket_id"].ljust(15)} Site: {ticket["site"].ljust(15)} Affected Users: {ticket["affected_users"].ljust(5)}\n")
 
     # Writes TOP 5 most expensive incidents to report
-    report_file.write("\nDE 5 DYRASTE INCEIDENTERNA\n--------------------\n")
+    report_file.write("\nDE 5 DYRASTE INCIDENTERNA\n--------------------\n")
     for top_5, (ticket, cost) in enumerate(data["top_expensive_incidents"], 1):
         report_file.write(f"{top_5}. Ticket ID: {ticket["ticket_id"].ljust(15)} Kostnad: {ticket["cost_sek"].ljust(10)}SEK\n")
 
@@ -158,6 +158,21 @@ with open("analysis_report.txt", "w", encoding="utf-8") as report_file:
         formatted_category = category.capitalize()
         report_file.write(f"{formatted_category.ljust(14)}{avg_impact_score:.2f}   Antal incidenter {category_data["incident_count"]}\n")
                           
-    
+# CSV Writer that creates a csv file "incidents_by_site.csv" including Total Cost
+def write_incidents_by_site_to_csv(data, output_filename="incidents_by_site.csv"):
+    with open(output_filename, mode="w", encoding="utf-8", newline="") as csv_file:
+        fieldnames = ["Site", "Antal Incidenter", "Totalkostnad (SEK)", "Genomsnittlig Resolution Tid (minuter)"]
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
-
+        writer.writeheader()
+        for site in data["unique_sites"]:
+            site_data = data["sites"][site]
+            avg_resolution_time = (sum(site_data["resolution_times"]) / len(site_data["resolution_times"]) if site_data["resolution_times"] else 0)
+            
+            writer.writerow({
+                "Site": site,
+                "Antal Incidenter": site_data["incident_count"],
+                "Totalkostnad (SEK)": format_swedish_total(site_data["total_cost"]), 
+                "Genomsnittlig Resolution Tid (minuter)": f"{avg_resolution_time:.2f}"
+            })
+write_incidents_by_site_to_csv(data)
