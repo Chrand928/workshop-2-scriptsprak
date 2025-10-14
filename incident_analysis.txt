@@ -1,3 +1,14 @@
+===================================
+Incident Analysis - Oktober 2025
+===================================
+
+EXECUTIVE SUMMARY
+-----------------
+⚠ KRITISKT: SW-DC-TOR-02 har 4 incidenter
+⚠ KOSTNAD: Dyraste incident: 45 678,90 SEK (TECH-2024-024, Huvudkontor)
+⚠ 5 enheter från förra veckans "problem devices" har genererat incidents
+⚠ KRITISKT: Alla sites har critical incidents som behöver hanteras
+
 SITES OCH ANALYSVECKOR
 --------------------
 Site: Datacenter
@@ -83,8 +94,9 @@ Säkerhetskopia:
 
 INCIDENTS PER CATEGORY - GENOMSNITTLIG IMPACT
 --------------------
-Connectivity  6.80   Antal incidenter 14
-Wifi          6.30   Antal incidenter 9
-Performance   5.95   Antal incidenter 14
-Security      5.78   Antal incidenter 6
-Hardware      7.09   Antal incidenter 9
+Kategori      AVG Impact  Antal Incidenter
+Connectivity  6.80        14
+Wifi          6.30        9
+Performance   5.95        14
+Security      5.78        6
+Hardware      7.09        9

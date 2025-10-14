@@ -20,7 +20,8 @@ def ticket_processor(network_incidents):
         "categories": defaultdict(lambda: {"incident_count": 0, "total_impact": 0.0, "impact_scores": []}),
         "unique_weeks": sorted({ticket["week_number"] for ticket in tickets}),
         "unique_sites": sorted({ticket["site"] for ticket in tickets}),
-        "severity_resolution_times": defaultdict(list),
+        "severity_resolution_times": defaultdict(list), 
+        "incidents_per_device": defaultdict(int),
     }
 
     # Severity order added going from highest to lowest
@@ -30,7 +31,7 @@ def ticket_processor(network_incidents):
     total_cost = 0.0
 
     for ticket in data["tickets"]: 
-    
+
         # Counts amount of tickets and sorts by severity level
         severity = ticket["severity"].lower()
         data["severity_counts"][ticket["severity"]] += 1
@@ -54,7 +55,7 @@ def ticket_processor(network_incidents):
         # Collect information by site
         site = ticket["site"]
         if site not in data["sites"]:
-            data["sites"][site] = {'incident_count': 0, 'total_cost': 0.0, 'resolution_times': [], 'weeks': set()}
+            data["sites"][site] = {"incident_count": 0, "total_cost": 0.0, "resolution_times": [], "weeks": set()}
 
         data["sites"][site]["incident_count"] += 1
         data["sites"][site]["total_cost"] += cost
@@ -66,6 +67,11 @@ def ticket_processor(network_incidents):
         data["categories"][category]["incident_count"] += 1
         data["categories"][category]["total_impact"] += float(ticket["impact_score"])
         data["categories"][category]["impact_scores"].append(float(ticket["impact_score"]))
+
+        # Counts incidents per device to be used in Executive Summary
+        device_hostname = ticket.get("device_hostname", "N/A")
+        if device_hostname != "N/A":
+            data["incidents_per_device"][device_hostname] += 1
 
     # Adds formattting to sort severity and capitalie the first letters
     for severity in severity_order:
@@ -93,6 +99,35 @@ def ticket_processor(network_incidents):
         else:
             data["avg_resolution_time"][severity.capitalize()] = 0
 
+    # Collects Executive Summary data on the device with the most incidents
+    if data["incidents_per_device"]:
+        most_incidents_device = max(data["incidents_per_device"].items(), key=lambda x: x[1])
+        data["most_incidents_device_id"] = most_incidents_device[0]
+        data["most_incidents_device_count"] = most_incidents_device[1]
+    else:
+        data["most_incidents_device_id"] = "N/A"
+        data["most_incidents_device_count"] = 0
+
+    # Collects Executive Summary data on the most expensive incident
+    data["most_expensive_incident"] = data["top_expensive_incidents"][0] if data["top_expensive_incidents"] else (None, 0)
+    data["highest_cost"] = format_swedish_total(data["most_expensive_incident"][1]) if data["most_expensive_incident"][0] else "0,00"
+    data["most_expensive_ticket_id"] = data["most_expensive_incident"][0]["ticket_id"] if data["most_expensive_incident"][0] else "N/A"
+    data["most_expensive_site"] = data["most_expensive_incident"][0]["site"] if data["most_expensive_incident"][0] else "N/A"
+
+    # Collects Executive Summary data about sites with no critical incidents
+    data["sites_without_critical"] = [
+        site for site in data["unique_sites"]
+        if not any(
+            ticket["severity"].lower() == "critical" and ticket["site"] == site
+            for ticket in data["tickets"]
+        )
+    ]
+
+    # Collects Executive Summary data on problem devices from last week
+    problem_devices_threshold = 3
+    problem_devices_this_week = [site for site in data["sites"] if data["sites"][site]["incident_count"] > problem_devices_threshold]
+    data["problem_devices_count"] = len(problem_devices_this_week)
+
     return data
 
 # Adds code to convert into swedish numbering to be used 
@@ -109,39 +144,55 @@ def format_swedish_total(cost_float):
 network_incidents = "network_incidents.csv"
 data = ticket_processor(network_incidents)
 
-
-# Writes Site and analysisperiod information from the data to a report
 with open("incident_analysis.txt", "w", encoding="utf-8") as report_file:
-    report_file.write("SITES OCH ANALYSVECKOR\n--------------------\n")
+    
+    # Adds static header to the report
+    report_file.write(f"="*35 + "\nIncident Analysis - Oktober 2025\n" + "="*35 + "\n")
+
+    # Adds Executive Summary to the report
+    report_file.write("\nEXECUTIVE SUMMARY\n-----------------\n")
+    report_file.write(f"⚠ KRITISKT: {data["most_incidents_device_id"]} har {data["most_incidents_device_count"]} incidenter\n")
+    report_file.write(f"⚠ KOSTNAD: Dyraste incident: {data["highest_cost"]} SEK ({data["most_expensive_ticket_id"]}, {data["most_expensive_site"]})\n")
+    report_file.write(f"⚠ {data["problem_devices_count"]} enheter från förra veckans \"problem devices\" har genererat incidents\n")
+
+    # Critical incident status message across all sites
+    if data["sites_without_critical"]:
+        message = f"✓ POSITIVT: Inga critical incidents på {", ".join(data["sites_without_critical"])}\n"
+    else:
+        message = "⚠ KRITISKT: Alla sites har critical incidents som behöver hanteras\n"
+    report_file.write(message)
+
+    # Writes Site and analysisperiod information from the data to the report
+    report_file.write("\nSITES OCH ANALYSVECKOR\n--------------------\n")
     for site in data["unique_sites"]:
         weeks = sorted(data["sites"][site]["weeks"])
         report_file.write(f"Site: {site}\nAnalysveckor: v.{", v.".join(weeks)}\n\n")
 
-    # Writes total amount of incidents per severity to report
+    # Writes total amount of incidents per severity to the report
     report_file.write("INCIDENTER PER SEVERITY-NIVÅ\n--------------------\n")
     for severity, count in data["formatted_severity_counts"].items():
         report_file.write(f"{severity.ljust(10)}-->   {count} incidents\n")
 
-    # Writes highest impact incidents to report
+    # Writes highest impact incidents to the report
     report_file.write("\nINCIDENTER SOM PÅVERKAT FLER ÄN 100 ANVÄNDARE\n--------------------\n")
     for ticket in data["high_impact_incidents"]:
         report_file.write(f"Ticket ID: {ticket["ticket_id"].ljust(15)} Site: {ticket["site"].ljust(15)} Affected Users: {ticket["affected_users"].ljust(5)}\n")
 
-    # Writes TOP 5 most expensive incidents to report
+    # Writes TOP 5 most expensive incidents to the report
     report_file.write("\nDE 5 DYRASTE INCIDENTERNA\n--------------------\n")
     for top_5, (ticket, cost) in enumerate(data["top_expensive_incidents"], 1):
         report_file.write(f"{top_5}. Ticket ID: {ticket["ticket_id"].ljust(15)} Kostnad: {ticket["cost_sek"].ljust(10)}SEK\n")
 
-    # Writes Total cost of incidents to report
+    # Writes Total cost of incidents to the report
     report_file.write("\nTOTALKOSTNAD FÖR INCIDENTER\n--------------------\n")
     report_file.write(f"Totalkostnad: {data["total_cost_formatted"]} SEK\n")
 
-    # Writes average resolution time to report
+    # Writes average resolution time to the report
     report_file.write("\nGENOMSNITTLIG RESOLUTION TIME PER SEVERITY-NIVÅ\n--------------------\n")
     for severity, avg_time in data["avg_resolution_time"].items():
         report_file.write(f"{severity.ljust(10)}-->   {avg_time:.2f} minuter\n")
 
-    # Writes Summary per site to report
+    # Writes Summary per site to the report
     report_file.write("\nÖVERSIKT PER SITE\n--------------------\n")
     for site in data ["unique_sites"]:
         site_data = data["sites"][site]
@@ -151,13 +202,14 @@ with open("incident_analysis.txt", "w", encoding="utf-8") as report_file:
         report_file.write(f" Totalkostnad: {format_swedish_total(site_data["total_cost"])} SEK\n")
         report_file.write(f" Genomsnittlig resolution tid: {avg_resolution_time:.2f} minuter\n\n")
  
-    # 
+    # Writes Average Impact of Incidents to the report
     report_file.write("\nINCIDENTS PER CATEGORY - GENOMSNITTLIG IMPACT\n--------------------\n")
+    report_file.write("Kategori      AVG Impact  Antal Incidenter\n")
     for category, category_data in data["categories"].items():
         avg_impact_score = sum(category_data["impact_scores"]) /len(category_data["impact_scores"]) if category_data["impact_scores"] else 0
         formatted_category = category.capitalize()
-        report_file.write(f"{formatted_category.ljust(14)}{avg_impact_score:.2f}   Antal incidenter {category_data["incident_count"]}\n")
-                          
+        report_file.write(f"{formatted_category.ljust(14)}{avg_impact_score:.2f}        {category_data["incident_count"]}\n")
+
 # CSV Writer that creates a csv file "incidents_by_site.csv" including Total Cost
 def write_incidents_by_site_to_csv(data, output_filename="incidents_by_site.csv"):
     with open(output_filename, mode="w", encoding="utf-8", newline="") as csv_file:
