@@ -52,7 +52,7 @@ def ticket_processor(network_incidents):
         # Collect the information on the 5 most expensive incidents
         data["top_expensive_incidents"].append((ticket, cost))
 
-        # Collect information by site
+        # Collect incident information by site and severity
         site = ticket["site"]
         if site not in data["sites"]:
             data["sites"][site] = {"incident_count": 0, "total_cost": 0.0, "resolution_times": [], "weeks": set()}
@@ -127,6 +127,51 @@ def ticket_processor(network_incidents):
     problem_devices_threshold = 3
     problem_devices_this_week = [site for site in data["sites"] if data["sites"][site]["incident_count"] > problem_devices_threshold]
     data["problem_devices_count"] = len(problem_devices_this_week)
+
+    # Collects device info to be used in the problem_devices.csv report
+    data["device_info"] = {}
+
+    for ticket in data["tickets"]:
+        device_hostname = ticket.get("device_hostname", "N/A")
+        if device_hostname == "N/A":
+            continue
+
+        device_type = ticket["ticket_id"].split("-")[2] if "-" in ticket["ticket_id"] else ticket["category"]
+
+        if device_hostname not in data["device_info"]:
+            data["device_info"][device_hostname] = {
+                "site": ticket["site"],
+                "device_type": device_type,
+                "incident_count": 0,
+                "severity_scores": [],
+                "total_cost": 0.0,
+                "affected_users": []
+            }
+
+        data["device_info"][device_hostname]["incident_count"] += 1
+        data["device_info"][device_hostname]["severity_scores"].append(ticket["severity"])
+        data["device_info"][device_hostname]["total_cost"] += parse_swedish_cost(ticket["cost_sek"])
+
+        affected_users = ticket.get("affected_users", "0")
+        if affected_users and affected_users.isdigit():
+            data["device_info"][device_hostname]["affected_users"].append(int(affected_users))
+
+    for device_hostname in data["device_info"]:
+        device_data = data["device_info"][device_hostname]
+
+        severity_scores = {"critical": 4, "high": 3, "medium": 2, "low": 1}
+        avg_severity_score = sum(severity_scores.get(severity.lower(), 0) for severity in device_data["severity_scores"]) / len(device_data["severity_scores"]) if device_data["severity_scores"] else 0
+        device_data["avg_severity_score"] = avg_severity_score
+
+        device_data["avg_affected_users"] = sum(device_data["affected_users"]) / len(device_data["affected_users"]) if device_data["affected_users"] else 0
+
+    current_week = max(int(ticket["week_number"]) for ticket in data["tickets"])
+    last_week = current_week - 1
+
+    for device_hostname in data["device_info"]:
+        device_data = data["device_info"][device_hostname]
+        device_data["in_last_weeks_warnings"] = any(ticket["device_hostname"] == device_hostname and int(ticket["week_number"]) == last_week for ticket in data["tickets"]
+        )
 
     return data
 
@@ -228,3 +273,33 @@ def write_incidents_by_site_to_csv(data, output_filename="incidents_by_site.csv"
                 "Genomsnittlig Resolution Tid (minuter)": f"{avg_resolution_time:.2f}"
             })
 write_incidents_by_site_to_csv(data)
+
+# CSV Writer that creates a csv file "problem_devices.csv"
+def write_device_summary_to_csv(data, output_filename="problem_devices.csv"):
+    with open(output_filename, mode="w", encoding="utf-8", newline="") as csv_file:
+        fieldnames = [
+            "device_hostname",
+            "site",
+            "device_type",
+            "incident_count",
+            "avg_severity_score",
+            "total_cost_sek",
+            "avg_affected_users", 
+            "in_last_weeks_warnings"
+        ]
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+
+        for device_hostname, device_data in data["device_info"].items():
+            writer.writerow({
+                "device_hostname": device_hostname,
+                "site": device_data["site"],
+                "device_type": device_data["device_type"],
+                "incident_count": device_data["incident_count"],
+                "avg_severity_score": f"{device_data['avg_severity_score']:.2f}",
+                "total_cost_sek": format_swedish_total(device_data["total_cost"]),
+                "avg_affected_users": f"{device_data['avg_affected_users']:.2f}", 
+                "in_last_weeks_warnings": device_data["in_last_weeks_warnings"]
+            })
+write_device_summary_to_csv(data)
+
