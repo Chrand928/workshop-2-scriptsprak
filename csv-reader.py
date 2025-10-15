@@ -173,6 +173,27 @@ def ticket_processor(network_incidents):
         device_data["in_last_weeks_warnings"] = any(ticket["device_hostname"] == device_hostname and int(ticket["week_number"]) == last_week for ticket in data["tickets"]
         )
 
+    # Collects cost information and impact scores to be added to "cost_analysis.csv" file
+    data["weekly_cost_analysis"] = {}
+
+    for ticket in data["tickets"]:
+        week_number = ticket["week_number"]
+
+        if week_number not in data["weekly_cost_analysis"]:
+            data["weekly_cost_analysis"][week_number] = {
+                "total_cost": 0.0,
+                "impact_scores": []
+            }
+
+        data["weekly_cost_analysis"][week_number]["total_cost"] += parse_swedish_cost(ticket["cost_sek"])
+        data["weekly_cost_analysis"][week_number]["impact_scores"].append(float(ticket["impact_score"]))
+
+    for week_number in data["weekly_cost_analysis"]:
+        impact_scores = data["weekly_cost_analysis"][week_number]["impact_scores"]
+        avg_impact_score = sum(impact_scores) / len(impact_scores) if impact_scores else 0
+        data["weekly_cost_analysis"][week_number]["avg_impact_score"] = avg_impact_score
+
+
     return data
 
 # Adds code to convert into swedish numbering to be used 
@@ -302,4 +323,26 @@ def write_device_summary_to_csv(data, output_filename="problem_devices.csv"):
                 "in_last_weeks_warnings": device_data["in_last_weeks_warnings"]
             })
 write_device_summary_to_csv(data)
+
+def write_cost_analysis_to_csv(data, output_filename="cost_analysis.csv"):
+    with open(output_filename, mode="w", encoding="utf-8", newline="") as csv_file:
+        fieldnames = [
+            "week_number",
+            "total_cost_sek",
+            "avg_impact_score"
+        ]
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+
+        # Sortera veckonummer för att få en kronologisk ordning
+        sorted_weeks = sorted(data["weekly_cost_analysis"].keys())
+
+        for week_number in sorted_weeks:
+            week_data = data["weekly_cost_analysis"][week_number]
+            writer.writerow({
+                "week_number": week_number,
+                "total_cost_sek": format_swedish_total(week_data["total_cost"]),
+                "avg_impact_score": f"{week_data['avg_impact_score']:.2f}"
+            })
+write_cost_analysis_to_csv(data)
 
