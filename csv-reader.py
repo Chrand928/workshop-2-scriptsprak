@@ -136,7 +136,18 @@ def ticket_processor(network_incidents):
         if device_hostname == "N/A":
             continue
 
-        device_type = ticket["ticket_id"].split("-")[2] if "-" in ticket["ticket_id"] else ticket["category"]
+        if device_hostname.startswith("SW-"):
+            device_type = "Switch"
+        elif device_hostname.startswith("AP-"):
+            device_type = "Access Point"
+        elif device_hostname.startswith("RT-"):
+            device_type = "Router"
+        elif device_hostname.startswith("FW-"):
+            device_type = "Firewall"
+        elif device_hostname.startswith("LB-"):
+            device_type = "Load Balancer"
+        else:
+            device_type = "Unknown"
 
         if device_hostname not in data["device_info"]:
             data["device_info"][device_hostname] = {
@@ -272,7 +283,7 @@ with open("incident_analysis.txt", "w", encoding="utf-8") as report_file:
     report_file.write("\nINCIDENTS PER CATEGORY - GENOMSNITTLIG IMPACT\n--------------------\n")
     report_file.write("Kategori      AVG Impact  Antal Incidenter\n")
     for category, category_data in data["categories"].items():
-        avg_impact_score = sum(category_data["impact_scores"]) /len(category_data["impact_scores"]) if category_data["impact_scores"] else 0
+        avg_impact_score = sum(category_data["impact_scores"]) / len(category_data["impact_scores"]) if category_data["impact_scores"] else 0
         formatted_category = category.capitalize()
         report_file.write(f"{formatted_category.ljust(14)}{avg_impact_score:.2f}        {category_data["incident_count"]}\n")
 

@@ -1,35 +1,35 @@
 device_hostname,site,device_type,incident_count,avg_severity_score,total_cost_sek,avg_affected_users,in_last_weeks_warnings
-SW-CORE-01,Huvudkontor,001,2,2.00,"7 458,25",25.50,False
-AP-LAGER-02,Lager,002,2,3.00,"22 513,25",50.50,False
-SW-DC-TOR-01,Datacenter,003,2,1.50,"4 221,50",56.00,True
-AP-MAL-01,Kontor Malmö,004,2,2.50,"22 134,50",39.50,False
-SW-ACCESS-05,Huvudkontor,005,1,3.00,"6 789,25",34.00,False
-SW-DC-TOR-02,Datacenter,006,4,3.75,"86 048,90",158.75,False
-RT-LAGER-01,Lager,007,3,2.67,"34 901,15",53.50,False
-SW-DR-01,Säkerhetskopia,008,3,1.33,"5 258,50",6.67,True
-AP-FLOOR2-02,Huvudkontor,009,2,3.50,"29 111,00",63.00,True
-FW-DC-01,Datacenter,010,2,3.00,"14 134,50",133.50,False
-SW-MAL-ACC-02,Kontor Malmö,011,1,2.00,"2 890,00",16.00,False
-AP-LAGER-01,Lager,012,2,1.50,"4 357,25",15.50,False
-RT-EDGE-02,Huvudkontor,013,1,3.00,"8 234,50",45.00,False
-RT-DR-01,Säkerhetskopia,015,2,3.00,"26 912,50",10.50,False
-FW-MAL-01,Kontor Malmö,016,1,1.00,"567,50",23.00,False
-SW-DIST-02,Huvudkontor,017,1,2.00,"3 123,00",29.00,False
-SW-LAGER-02,Lager,018,2,2.50,"11 679,50",43.50,True
-LB-DC-01,Datacenter,019,1,2.00,"4 567,25",78.00,False
-AP-FLOOR1-02,Huvudkontor,020,1,1.00,"1 345,75",15.00,False
-SW-MAL-CORE-01,Kontor Malmö,021,1,3.00,"9 876,25",67.00,False
-SW-ACCESS-03,Huvudkontor,024,1,4.00,"45 678,90",87.00,True
-FW-DR-01,Säkerhetskopia,025,2,2.00,"9 545,00",7.50,True
-SW-DC-CORE-02,Datacenter,026,1,2.00,"5 234,75",234.00,True
-AP-MAL-02,Kontor Malmö,027,1,3.00,"6 543,50",43.00,True
-RT-EDGE-01,Huvudkontor,029,1,1.00,"2 156,25",12.00,True
-FW-DC-02,Datacenter,030,1,3.00,"8 765,50",145.00,True
-RT-MAL-01,Kontor Malmö,032,2,2.50,"28 579,25",38.50,True
-AP-FLOOR3-01,Huvudkontor,033,1,2.00,"4 321,25",38.00,False
-SW-MAL-ACC-01,Kontor Malmö,038,1,2.00,"2 123,50",24.00,True
-LB-DC-02,Datacenter,039,1,3.00,"11 234,25",198.00,False
-FW-DMZ-01,Huvudkontor,041,1,2.00,"3 456,90",52.00,False
-SW-LAGER-01,Lager,045,1,2.00,"4 678,25",41.00,False
-SW-DC-CORE-01,Datacenter,047,1,2.00,"5 789,75",123.00,True
-SW-DIST-01,Huvudkontor,051,1,1.00,"1 678,75",8.00,True
+SW-CORE-01,Huvudkontor,Switch,2,2.00,"7 458,25",25.50,False
+AP-LAGER-02,Lager,Access Point,2,3.00,"22 513,25",50.50,False
+SW-DC-TOR-01,Datacenter,Switch,2,1.50,"4 221,50",56.00,True
+AP-MAL-01,Kontor Malmö,Access Point,2,2.50,"22 134,50",39.50,False
+SW-ACCESS-05,Huvudkontor,Switch,1,3.00,"6 789,25",34.00,False
+SW-DC-TOR-02,Datacenter,Switch,4,3.75,"86 048,90",158.75,False
+RT-LAGER-01,Lager,Router,3,2.67,"34 901,15",53.50,False
+SW-DR-01,Säkerhetskopia,Switch,3,1.33,"5 258,50",6.67,True
+AP-FLOOR2-02,Huvudkontor,Access Point,2,3.50,"29 111,00",63.00,True
+FW-DC-01,Datacenter,Firewall,2,3.00,"14 134,50",133.50,False
+SW-MAL-ACC-02,Kontor Malmö,Switch,1,2.00,"2 890,00",16.00,False
+AP-LAGER-01,Lager,Access Point,2,1.50,"4 357,25",15.50,False
+RT-EDGE-02,Huvudkontor,Router,1,3.00,"8 234,50",45.00,False
+RT-DR-01,Säkerhetskopia,Router,2,3.00,"26 912,50",10.50,False
+FW-MAL-01,Kontor Malmö,Firewall,1,1.00,"567,50",23.00,False
+SW-DIST-02,Huvudkontor,Switch,1,2.00,"3 123,00",29.00,False
+SW-LAGER-02,Lager,Switch,2,2.50,"11 679,50",43.50,True
+LB-DC-01,Datacenter,Load Balancer,1,2.00,"4 567,25",78.00,False
+AP-FLOOR1-02,Huvudkontor,Access Point,1,1.00,"1 345,75",15.00,False
+SW-MAL-CORE-01,Kontor Malmö,Switch,1,3.00,"9 876,25",67.00,False
+SW-ACCESS-03,Huvudkontor,Switch,1,4.00,"45 678,90",87.00,True
+FW-DR-01,Säkerhetskopia,Firewall,2,2.00,"9 545,00",7.50,True
+SW-DC-CORE-02,Datacenter,Switch,1,2.00,"5 234,75",234.00,True
+AP-MAL-02,Kontor Malmö,Access Point,1,3.00,"6 543,50",43.00,True
+RT-EDGE-01,Huvudkontor,Router,1,1.00,"2 156,25",12.00,True
+FW-DC-02,Datacenter,Firewall,1,3.00,"8 765,50",145.00,True
+RT-MAL-01,Kontor Malmö,Router,2,2.50,"28 579,25",38.50,True
+AP-FLOOR3-01,Huvudkontor,Access Point,1,2.00,"4 321,25",38.00,False
+SW-MAL-ACC-01,Kontor Malmö,Switch,1,2.00,"2 123,50",24.00,True
+LB-DC-02,Datacenter,Load Balancer,1,3.00,"11 234,25",198.00,False
+FW-DMZ-01,Huvudkontor,Firewall,1,2.00,"3 456,90",52.00,False
+SW-LAGER-01,Lager,Switch,1,2.00,"4 678,25",41.00,False
+SW-DC-CORE-01,Datacenter,Switch,1,2.00,"5 789,75",123.00,True
+SW-DIST-01,Huvudkontor,Switch,1,1.00,"1 678,75",8.00,True
