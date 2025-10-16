@@ -91,7 +91,6 @@ Säkerhetskopia:
  Totalkostnad: 41 716,00 SEK
  Genomsnittlig resolution tid: 112.86 minuter
 
-
 INCIDENTS PER CATEGORY - GENOMSNITTLIG IMPACT
 --------------------
 Kategori      AVG Impact  Antal Incidenter
@@ -100,3 +99,111 @@ Wifi          6.30        9
 Performance   5.95        14
 Security      5.78        6
 Hardware      7.09        9
+
+ENHETER MED ÅTERKOMMANDE PROBLEM
+--------------------
+Enhet: SW-DC-TOR-01
+ Typ: Switch
+ Antal incidenter: 2
+ Genomsnittlig allvarlighetsgrad: 1.50
+ Genomsnittligt antal påverkade användare: 56.00
+ Föreslagna åtgärder: Utred orsaken till de många påverkade användarna, optimera nätverksinställningar.
+
+Enhet: SW-DC-TOR-02
+ Typ: Switch
+ Antal incidenter: 4
+ Genomsnittlig allvarlighetsgrad: 3.75
+ Genomsnittligt antal påverkade användare: 158.75
+ Föreslagna åtgärder: Utför en fullständig hälsokontroll, uppdatera hårdvara/mjukvara, övervaka noggrant.
+
+Enhet: SW-DR-01
+ Typ: Switch
+ Antal incidenter: 3
+ Genomsnittlig allvarlighetsgrad: 1.33
+ Genomsnittligt antal påverkade användare: 6.67
+ Föreslagna åtgärder: Övervaka noggrant och utreda återkommande problem.
+
+Enhet: AP-FLOOR2-02
+ Typ: Access Point
+ Antal incidenter: 2
+ Genomsnittlig allvarlighetsgrad: 3.50
+ Genomsnittligt antal påverkade användare: 63.00
+ Föreslagna åtgärder: Utför en fullständig hälsokontroll, uppdatera hårdvara/mjukvara, övervaka noggrant.
+
+Enhet: SW-LAGER-02
+ Typ: Switch
+ Antal incidenter: 2
+ Genomsnittlig allvarlighetsgrad: 2.50
+ Genomsnittligt antal påverkade användare: 43.50
+ Föreslagna åtgärder: Övervaka noggrant och utreda återkommande problem.
+
+Enhet: SW-ACCESS-03
+ Typ: Switch
+ Antal incidenter: 1
+ Genomsnittlig allvarlighetsgrad: 4.00
+ Genomsnittligt antal påverkade användare: 87.00
+ Föreslagna åtgärder: Utför en fullständig hälsokontroll, uppdatera hårdvara/mjukvara, övervaka noggrant.
+
+Enhet: FW-DR-01
+ Typ: Firewall
+ Antal incidenter: 2
+ Genomsnittlig allvarlighetsgrad: 2.00
+ Genomsnittligt antal påverkade användare: 7.50
+ Föreslagna åtgärder: Övervaka noggrant och utreda återkommande problem.
+
+Enhet: SW-DC-CORE-02
+ Typ: Switch
+ Antal incidenter: 1
+ Genomsnittlig allvarlighetsgrad: 2.00
+ Genomsnittligt antal påverkade användare: 234.00
+ Föreslagna åtgärder: Utred orsaken till de många påverkade användarna, optimera nätverksinställningar.
+
+Enhet: AP-MAL-02
+ Typ: Access Point
+ Antal incidenter: 1
+ Genomsnittlig allvarlighetsgrad: 3.00
+ Genomsnittligt antal påverkade användare: 43.00
+ Föreslagna åtgärder: Övervaka noggrant och utreda återkommande problem.
+
+Enhet: RT-EDGE-01
+ Typ: Router
+ Antal incidenter: 1
+ Genomsnittlig allvarlighetsgrad: 1.00
+ Genomsnittligt antal påverkade användare: 12.00
+ Föreslagna åtgärder: Övervaka noggrant och utreda återkommande problem.
+
+Enhet: FW-DC-02
+ Typ: Firewall
+ Antal incidenter: 1
+ Genomsnittlig allvarlighetsgrad: 3.00
+ Genomsnittligt antal påverkade användare: 145.00
+ Föreslagna åtgärder: Utred orsaken till de många påverkade användarna, optimera nätverksinställningar.
+
+Enhet: RT-MAL-01
+ Typ: Router
+ Antal incidenter: 2
+ Genomsnittlig allvarlighetsgrad: 2.50
+ Genomsnittligt antal påverkade användare: 38.50
+ Föreslagna åtgärder: Övervaka noggrant och utreda återkommande problem.
+
+Enhet: SW-MAL-ACC-01
+ Typ: Switch
+ Antal incidenter: 1
+ Genomsnittlig allvarlighetsgrad: 2.00
+ Genomsnittligt antal påverkade användare: 24.00
+ Föreslagna åtgärder: Övervaka noggrant och utreda återkommande problem.
+
+Enhet: SW-DC-CORE-01
+ Typ: Switch
+ Antal incidenter: 1
+ Genomsnittlig allvarlighetsgrad: 2.00
+ Genomsnittligt antal påverkade användare: 123.00
+ Föreslagna åtgärder: Utred orsaken till de många påverkade användarna, optimera nätverksinställningar.
+
+Enhet: SW-DIST-01
+ Typ: Switch
+ Antal incidenter: 1
+ Genomsnittlig allvarlighetsgrad: 1.00
+ Genomsnittligt antal påverkade användare: 8.00
+ Föreslagna åtgärder: Övervaka noggrant och utreda återkommande problem.
+

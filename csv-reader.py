@@ -280,12 +280,37 @@ with open("incident_analysis.txt", "w", encoding="utf-8") as report_file:
         report_file.write(f" Genomsnittlig resolution tid: {avg_resolution_time:.2f} minuter\n\n")
  
     # Writes Average Impact of Incidents to the report
-    report_file.write("\nINCIDENTS PER CATEGORY - GENOMSNITTLIG IMPACT\n--------------------\n")
+    report_file.write("INCIDENTS PER CATEGORY - GENOMSNITTLIG IMPACT\n--------------------\n")
     report_file.write("Kategori      AVG Impact  Antal Incidenter\n")
     for category, category_data in data["categories"].items():
         avg_impact_score = sum(category_data["impact_scores"]) / len(category_data["impact_scores"]) if category_data["impact_scores"] else 0
         formatted_category = category.capitalize()
         report_file.write(f"{formatted_category.ljust(14)}{avg_impact_score:.2f}        {category_data["incident_count"]}\n")
+
+    # Writes reccuring problematic devices to the report
+    report_file.write("\nENHETER MED ÅTERKOMMANDE PROBLEM\n--------------------\n")
+
+    recurring_problem_devices = []
+    for device_hostname, device_data in data["device_info"].items():
+        if device_data["incident_count"] > 3 or device_data.get("in_last_weeks_warnings", False):
+            recurring_problem_devices.append((device_hostname, device_data))
+
+    if recurring_problem_devices:
+        for device_hostname, device_data in recurring_problem_devices:
+            report_file.write(f"Enhet: {device_hostname}\n")
+            report_file.write(f" Typ: {device_data['device_type']}\n")
+            report_file.write(f" Antal incidenter: {device_data['incident_count']}\n")
+            report_file.write(f" Genomsnittlig allvarlighetsgrad: {device_data['avg_severity_score']:.2f}\n")
+            report_file.write(f" Genomsnittligt antal påverkade användare: {device_data['avg_affected_users']:.2f}\n")
+
+            if device_data["avg_severity_score"] > 3.0:
+                report_file.write(f" Föreslagna åtgärder: Utför en fullständig hälsokontroll, uppdatera hårdvara/mjukvara, övervaka noggrant.\n\n")
+            elif device_data["avg_affected_users"] > 50:
+                report_file.write(f" Föreslagna åtgärder: Utred orsaken till de många påverkade användarna, optimera nätverksinställningar.\n\n")
+            else:
+                report_file.write(f" Föreslagna åtgärder: Övervaka noggrant och utreda återkommande problem.\n\n")
+    else:
+        report_file.write("Inga enheter med återkommande problem identifierades.\n\n")
 
 # CSV Writer that creates a csv file "incidents_by_site.csv" including Total Cost
 def write_incidents_by_site_to_csv(data, output_filename="incidents_by_site.csv"):
