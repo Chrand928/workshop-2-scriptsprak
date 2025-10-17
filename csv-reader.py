@@ -4,10 +4,53 @@ from collections import defaultdict
 
 def ticket_processor(network_incidents):
     tickets = []
+    data_quality_issues = []
     with open(network_incidents, mode="r", encoding="utf-8") as file:
         csv_reader = csv.DictReader(file)
         for row in csv_reader:
-            tickets.append(row)
+            try:
+                    # Kontrollera obligatoriska fält
+                    required_fields = ["ticket_id", "week_number", "site", "severity", "cost_sek", "impact_score"]
+                    missing_fields = [field for field in required_fields if field not in row]
+                    if missing_fields:
+                        data_quality_issues.append(f"Saknade obligatoriska fält i rad: {missing_fields}. Rad: {row}")
+                        continue
+
+                    # Kontrollera att veckonummer är giltigt
+                    if not row["week_number"].isdigit():
+                        if week_number < 1 or week_number > 53:
+                            data_quality_issues.append(f"Ogiltigt veckonummer i rad: {row}")
+                            continue
+
+                    # Kontrollera att kostnad är giltig
+                    try:
+                        parse_swedish_cost(row["cost_sek"])
+                    except ValueError:
+                        data_quality_issues.append(f"Ogiltig kostnad i rad: {row}")
+                        continue
+
+                    # Kontrollera att impact_score är giltig
+                    try:
+                        float(row["impact_score"])
+                    except ValueError:
+                        data_quality_issues.append(f"Ogiltig impact_score i rad: {row}")
+                        continue
+
+                    tickets.append(row)
+            
+            except Exception as exc:
+                    data_quality_issues.append(f"Okänt fel vid läsning av rad: {row}. Fel: {str(exc)}")
+
+            except FileNotFoundError:
+                data_quality_issues.append(f"Filen {network_incidents} hittades inte.")
+                return {"data_quality_issues": data_quality_issues}
+            except Exception as exc:
+                data_quality_issues.append(f"Okänt fel vid läsning av filen: {str(exc)}")
+                return {"data_quality_issues": data_quality_issues}
+
+    if not tickets:
+        data_quality_issues.append("Inga giltiga rader kunde läsas in från CSV-filen.")
+        return {"data_quality_issues": data_quality_issues}
 
     # Creates a centralized datastructure that we can point back to throughout the code 
     data = {
@@ -312,6 +355,14 @@ with open("incident_analysis.txt", "w", encoding="utf-8") as report_file:
     else:
         report_file.write("Inga enheter med återkommande problem identifierades.\n\n")
 
+    report_file.write("\nDATAKVALITETSPROBLEM\n-------------------\n")
+
+    if "data_quality_issues" in data and data["data_quality_issues"]:
+        for issue in data["data_quality_issues"]:
+            report_file.write(f"⚠ {issue}\n")
+    else:
+        report_file.write("Inga datakvalitetsproblem identifierades.\n")
+
 # CSV Writer that creates a csv file "incidents_by_site.csv" including Total Cost
 def write_incidents_by_site_to_csv(data, output_filename="incidents_by_site.csv"):
     with open(output_filename, mode="w", encoding="utf-8", newline="") as csv_file:
@@ -360,6 +411,7 @@ def write_device_summary_to_csv(data, output_filename="problem_devices.csv"):
             })
 write_device_summary_to_csv(data)
 
+# CSV Writer that creates a csv file "cost_analysis.csv"
 def write_cost_analysis_to_csv(data, output_filename="cost_analysis.csv"):
     with open(output_filename, mode="w", encoding="utf-8", newline="") as csv_file:
         fieldnames = [
@@ -370,7 +422,6 @@ def write_cost_analysis_to_csv(data, output_filename="cost_analysis.csv"):
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
 
-        # Sortera veckonummer för att få en kronologisk ordning
         sorted_weeks = sorted(data["weekly_cost_analysis"].keys())
 
         for week_number in sorted_weeks:

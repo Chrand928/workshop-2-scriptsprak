@@ -207,3 +207,7 @@ Enhet: SW-DIST-01
  Genomsnittligt antal påverkade användare: 8.00
  Föreslagna åtgärder: Övervaka noggrant och utreda återkommande problem.
 
+
+DATAKVALITETSPROBLEM
+-------------------
+Inga datakvalitetsproblem identifierades.
