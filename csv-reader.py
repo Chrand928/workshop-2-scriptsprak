@@ -9,27 +9,27 @@ def ticket_processor(network_incidents):
         csv_reader = csv.DictReader(file)
         for row in csv_reader:
             try:
-                    # Kontrollera obligatoriska fält
+                    # Checks required fields 
                     required_fields = ["ticket_id", "week_number", "site", "severity", "cost_sek", "impact_score"]
                     missing_fields = [field for field in required_fields if field not in row]
                     if missing_fields:
                         data_quality_issues.append(f"Saknade obligatoriska fält i rad: {missing_fields}. Rad: {row}")
                         continue
 
-                    # Kontrollera att veckonummer är giltigt
+                    # Checks if the week number formatting is correct
                     if not row["week_number"].isdigit():
                         if week_number < 1 or week_number > 53:
                             data_quality_issues.append(f"Ogiltigt veckonummer i rad: {row}")
                             continue
 
-                    # Kontrollera att kostnad är giltig
+                    # Checks if cost formatting is correct
                     try:
                         parse_swedish_cost(row["cost_sek"])
                     except ValueError:
                         data_quality_issues.append(f"Ogiltig kostnad i rad: {row}")
                         continue
 
-                    # Kontrollera att impact_score är giltig
+                    # Checks if impact_score formatting is correct
                     try:
                         float(row["impact_score"])
                     except ValueError:
